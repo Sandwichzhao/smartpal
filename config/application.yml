@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: test
+  jpa:
+    database: MYSQL
+    show-sql: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://106.52.168.27:3306/erp?characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
+  resources:
+    static-locations: classpath:/templates/,classpath:/static/
+
+server:
+  port: 8080
+  undertow:
+    worker-threads: 150
+management:
+  port: 8081
+
+
+

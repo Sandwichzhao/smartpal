@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="../layui/css/layui.css"/>
+</head>
+<body>
+<div class="layui-row">
+    <div class="layui-col-md4 layui-col-md-offset4">
+        <form
+                class="layui-form"
+                action=""
+                style="width: 400px; margin: auto; margin-top: 100px;"
+        >
+            <!-- 账号 start-->
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">账号</label>
+                    <div class="layui-input-inline">
+                        <input
+                                type="text"
+                                name="account"
+                                required
+                                lay-verify="required"
+                                placeholder="请输入账号"
+                                autocomplete="off"
+                                class="layui-input"
+                        />
+                    </div>
+                </div>
+            </div>
+            <!-- 账号 end-->
+
+            <!-- 密码 start-->
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-inline">
+                        <input
+                                type="password"
+                                name="password"
+                                required
+                                lay-verify="required"
+                                placeholder="请输入密码"
+                                autocomplete="off"
+                                class="layui-input"
+                        />
+                    </div>
+                </div>
+            </div>
+            <!-- 密码 end-->
+
+            <!-- 提交 start-->
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">
+                            提交
+                        </button>
+                        <button type="reset" class="layui-btn">重置</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 提交 end-->
+        </form>
+    </div>
+</div>
+
+<!--必须还要引入一次-->
+<script src="../layui/layui.all.js"></script>
+<script src="../js/jquery-3.4.1.js"></script>
+<script>
+    //Demo
+    layui.use("form", function () {
+        var form = layui.form;
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            $.ajax({
+              url:'/v1/user/login',
+              type:'post',
+              contentType: 'application/json;charset=utf8',
+              data:JSON.stringify(data.field),
+              success:function(data){
+                if(data){
+                  alert(JSON.stringify(data))
+                  window.location.href = 'taobao.html';
+                }
+              },
+              error:function(e){
+                alert("提交失败！");
+                window.location.href = 'login.html';
+              },
+
+            });
+            return false;
+        });
+
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="../layui/css/layui.css"/>
+</head>
+<body>
+<div>
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <!-- 订单-->
+            <div class="layui-inline">
+                <label class="layui-form-label">订单编号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="serialNumber" required lay-verify="required" placeholder="请输入订单编号"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <!-- 日期 -->
+            <div class="layui-inline">
+                <label class="layui-form-label">日期范围</label>
+                <div class="layui-input-inline">
+                    <input
+                            type="text"
+                            class="layui-input"
+                            name="searchData"
+                            id="test6"
+                            placeholder=" - "
+                    />
+                </div>
+            </div>
+
+            <!-- 搜索 -->
+            <div class="layui-inline">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="search">立即提交</button>
+            </div>
+
+            <table id="demo" lay-filter="test" style="margin: auto"></table>
+        </div>
+    </form>
+</div>
+
+<script src="../layui/layui.all.js"></script>
+<script src="../js/echarts.js"></script>
+<script src="../js/jquery-3.4.1.js"></script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="pay">付款</a>
+    <a class="layui-btn layui-btn-xs" lay-event="payHistory">支付历史</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" id="del_item" lay-event="del">删除</a>
+</script>
+
+
+<!-- 自定义工具栏 -->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-table-tool-temp" style="float: left;padding-right: 20px;">
+        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
+        <!--        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>-->
+        <!--        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>-->
+        <!--        <div class="layui-inline" lay-event="refresh"><i class="layui-icon layui-icon-refresh-3"></i></div>-->
+    </div>
+</script>
+
+<script>
+    //   layUI
+    layui.use(['laydate', 'table', 'form'], function () {
+        var form = layui.form
+            , laydate = layui.laydate
+            , table = layui.table
+            , jquery = layui.jquery;
+
+        laydate.render({
+            elem: "#test6",
+            range: true
+        });
+
+        //执行一个 table 实例
+        table.render({
+            elem: '#demo'
+            , height: 700
+            , method: 'post'
+            , where: {serialNumber: 'sasasas'}
+            , contentType: 'application/json'
+            , url: '/v1/query/inputOrderPay' //数据接口
+            , page: true //开启分页
+            , limit: 14 //开启分页
+            // , toolbar: 'default' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+            ,defaultToolbar: ["filter","exports"]
+            ,toolbar: "#toolbarDemo"
+            , totalRow: false //开启合计行
+            , cols: [[ //表头
+                {type: 'checkbox', fixed: 'left'}
+                , {field: 'id', title: 'ID', width: 80, fixed: 'left'}
+                , {field: 'userId', title: '用户ID', width: 100}
+                , {field: 'serialNumber', title: '流水号', width: 350}
+                , {field: 'needPay', title: '应付账款', width: 150}
+                , {field: 'alreadyPay', title: '已付账款', width: 200}
+                , {field: 'remainPay', title: '待付账款', width: 200}
+                , {field: 'latestPayTime', title: '最近一次支付', width: 300}
+                , {fixed: 'right', width: 200, align: 'center', toolbar: '#barDemo'}
+            ]]
+        });
+
+        //搜索提交
+        form.on('submit(search)', function (data) {
+            var json = JSON.stringify(data.field);
+
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            });
+            return false;
+        });
+
+        //监听工具条(查看、编辑、删除)
+        table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var dataJson = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+
+            if (layEvent === 'pay') { //查看
+                //do somehing
+
+            } else if (layEvent === 'del') { //删除
+                layer.confirm('真的删除行么', function (index) {
+                    alert(JSON.stringify(dataJson));
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    $.ajax({
+                        url: '/v1/inputOrderPay/' + dataJson.id,
+                        type: 'delete',
+                        contentType: 'application/json;charset=utf8',
+                        data: '',
+                        success: function (data) {
+                            if (data) {
+                                alert('delete success.....')
+                            }
+                        },
+                        error: function (e) {
+                            alert("提交失败！");
+                        },
+
+                    });
+                    return true;
+
+                });
+            } else if (layEvent === 'payHistory') { //编辑
+                //do something
+                // alert(JSON.stringify(dataJson));
+                // //同步更新缓存对应的值
+                // obj.update({
+                //     username: '123'
+                //     ,title: 'xxx'
+                // });
+
+                layer.open({
+                    type: 0,
+                    title: "信息更新",
+                    area: ['400px', '400px'],
+                    content: jquery("#InfoUpdate"),//引用的弹出层的页面层的方式加载修改界面表单
+                    btn: ['确认', '取消'],
+                    yes: function (index, layero) {
+                        alert('-----确定')
+                        layer.close(index);
+                        // location.reload();//关闭时刷新页面
+                    },
+                    btn2: function (index, layero) {
+                        alert('-----取消')
+                        layer.close(index);
+                        // location.reload();//关闭时刷新页面
+                    },
+                    end:function (res) {
+                        // $("#InfoUpdate").css("display",'none');
+                        location.reload();//关闭时刷新页面
+                    }
+
+
+                });
+
+            } else if (layEvent === 'LAYTABLE_TIPS') {
+                layer.alert('Hi，头部工具栏扩展的右侧图标。');
+            }
+        });
+    });
+</script>
+
+</body>
+
+<!-- 弹出框 -->
+<div class="layui-row" id="InfoUpdate" style="display: none;">
+    <div class="layui-col-md10">
+        <form class="layui-form layui-from-pane" action="" style="margin-top: 20px">
+            <div class="layui-form-item">
+                <label class="layui-form-label">ID</label>
+
+                <div class="layui-input-block">
+                    <input id="id" type="text" name="neweqptIdCode" required
+                           lay-verify="required" autocomplete="off" disabled="disabled"
+                           class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">订单流水号</label>
+                <div class="layui-input-block">
+                    <input id="serialNumber" type="text" name="neweqptIdCode"
+                           required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">采购人id</label>
+                <div class="layui-input-block">
+                    <input id="userId" type="text" name="neweqptIdCode"
+                           required lay-verify="required" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">采购地址</label>
+                <div class="layui-input-block">
+                    <input id="address" type="text" name="neweqptIdCode"
+                           required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">采购数量</label>
+                <div class="layui-input-block">
+                    <input id="number" type="text" name="neweqptIdCode"
+                           required lay-verify="required" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">价格</label>
+                <div class="layui-input-block">
+                    <input id="price" type="text" name="neweqptIdCode"
+                           required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <input id="statement" type="text" name="neweqptIdCode"
+                           required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">采购时间</label>
+                <div class="layui-input-block">
+                    <input id="createdAt" type="text" name="neweqptIdCode"
+                           required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+</div>
+<!-- 弹出框 -->
+</html>
