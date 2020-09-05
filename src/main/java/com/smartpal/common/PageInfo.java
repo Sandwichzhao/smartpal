@@ -2,26 +2,26 @@ package com.smartpal.common;
 
 public class PageInfo {
     //当前页数
-    private int page = 1;
+    private int currentPage = 1;
     //每页数量
-    private int limit = 10;
+    private int pageNumber = 10;
     //总页数
     private long totalPage;
 
-    public int getPage() {
-        return page;
+    public int getCurrentPage() {
+        return currentPage;
     }
 
-    public void setPage(int page) {
-        this.page = page;
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 
-    public int getLimit() {
-        return limit;
+    public int getPageNumber() {
+        return pageNumber;
     }
 
-    public void setLimit(int limit) {
-        this.limit = limit;
+    public void setPageNumber(int pageNumber) {
+        this.pageNumber = pageNumber;
     }
 
     public long getTotalPage() {

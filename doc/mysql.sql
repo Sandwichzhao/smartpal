@@ -52,4 +52,32 @@ CREATE TABLE `input_pay_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='付款历史';
 
 
+-- ################################# 价格监控 #################################
+CREATE TABLE `goods` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `store_id` varchar(64) DEFAULT NULL COMMENT '店铺pk',
+  `snapshot_time` varchar(1024) NOT NULL COMMENT '抓取时间',
+  `name` varchar(64) DEFAULT NULL COMMENT '商品名称',
+  `pirce` varchar(64) NOT NULL DEFAULT '' COMMENT '商品价格',
+  `url` varchar(1024) NOT NULL COMMENT '商品图片url',
+  `statement` varchar(1024) NOT NULL COMMENT '说明',
+  `uuid` varchar(1024) DEFAULT NULL COMMENT '唯一id',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB COMMENT='商品信息';
+
+
+CREATE TABLE `store` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(64) DEFAULT NULL COMMENT '店铺名称',
+  `note` varchar(1024) NOT NULL DEFAULT '' COMMENT '备注',
+  `url` varchar(1024) NOT NULL COMMENT '爬虫抓取URL',
+  `status` varchar(1024) NOT NULL COMMENT '状态',
+  `created_at` datetime NOT NULL COMMENT '创建时间',
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB COMMENT='店铺信息';
+
+
 

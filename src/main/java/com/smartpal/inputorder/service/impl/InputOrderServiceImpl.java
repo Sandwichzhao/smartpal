@@ -1,6 +1,5 @@
 package com.smartpal.inputorder.service.impl;
 
-import com.smartpal.common.PageInfo;
 import com.smartpal.inputorder.bean.QueryInputOrder;
 import com.smartpal.inputorder.domain.InputOrderEntity;
 import com.smartpal.inputorder.domain.repository.InputOrderRepository;
@@ -60,7 +59,7 @@ public class InputOrderServiceImpl implements InputOrderService {
 
     @Override
     public Page<InputOrderEntity> queryInputOrderEntity(QueryInputOrder queryInfo) {
-        PageRequest pageable = PageRequest.of(queryInfo.getPage() - 1, queryInfo.getLimit());
+        PageRequest pageable = PageRequest.of(queryInfo.getCurrentPage() - 1, queryInfo.getPageNumber());
         Page<InputOrderEntity> pageResult = null;
         if (StringUtils.isEmpty(queryInfo.getSerialNumber())
                 && StringUtils.isEmpty(queryInfo.getBeginAt())

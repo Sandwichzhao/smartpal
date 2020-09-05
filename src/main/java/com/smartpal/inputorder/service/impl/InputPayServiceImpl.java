@@ -21,7 +21,7 @@ public class InputPayServiceImpl implements InputPayService {
 
     @Override
     public Page<InputPayEntity> queryInputPayEntity(QueryInputOrder queryInfo) {
-        PageRequest pageable = PageRequest.of(queryInfo.getPage() - 1, queryInfo.getLimit());
+        PageRequest pageable = PageRequest.of(queryInfo.getCurrentPage() - 1, queryInfo.getPageNumber());
         Page<InputPayEntity> pageResult = null;
         if (StringUtils.isEmpty(queryInfo.getSerialNumber())
                 && StringUtils.isEmpty(queryInfo.getBeginAt())
